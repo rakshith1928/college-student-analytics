@@ -1,0 +1,96 @@
+================================================================================
+COLLEGE STUDENT ANALYTICS USING MONGODB - BDA MINI PROJECT
+================================================================================
+
+PROJECT STRUCTURE
+-----------------
+college_analytics/
+  .env                  MongoDB connection string (MONGO_URI=...) - ALREADY SET UP
+  .env.example          Template showing the .env format
+  generate_data.py      Step 1: Generates synthetic student & result data (JSON)
+  load_data.py          Step 2: Loads JSON into MongoDB + creates indexes
+  analyses.py           Step 3: Runs Q1-Q7 analyses (find + aggregation)
+  explain_check.py      Step 4: Verifies index effect with explain()
+  visualise.py          Step 5: Generates charts (saved to charts/)
+  run_all.py            Orchestrates steps 1-5 in sequence
+  streamlit_app.py      Optional: Streamlit dashboard over the same database
+  requirements.txt      Python dependencies
+  console_output.txt    Verbatim output of a full pipeline run
+  charts/               Generated bar charts/histograms (PNG)
+  students.json         Generated student collection (1,200 docs)
+  results.json          Generated results collection (7,200 docs)
+
+PREREQUISITES
+-------------
+- Python 3.10+ (tested on Python 3.13.12)
+- Internet access (one-time pip install)
+- NO local MongoDB server is used - the project connects to the team's
+  MongoDB Atlas cluster using the MONGO_URI in .env (already configured).
+  Scripts fail fast with a clear message if MONGO_URI is missing.
+
+INSTALLATION
+------------
+1. Install Python dependencies:
+     pip install -r requirements.txt
+
+2. Check the .env file is present next to the scripts. It contains:
+     MONGO_URI=mongodb+srv://...  (team Atlas cluster - do not delete)
+
+HOW TO RUN
+----------
+Option A - Run everything at once:
+     python run_all.py
+
+   This executes generate_data.py -> load_data.py -> analyses.py ->
+   explain_check.py -> visualise.py in sequence and prints every result.
+
+Option B - Run steps individually:
+     python generate_data.py      # creates students.json + results.json
+     python load_data.py          # loads JSON into MongoDB + creates indexes
+     python analyses.py           # runs Q1-Q7 analyses
+     python explain_check.py      # verifies index with explain()
+     python visualise.py          # generates charts in charts/
+
+Option C - Launch the Streamlit dashboard (showcase):
+     streamlit run streamlit_app.py
+   Then open http://localhost:8501 in a browser.
+
+NOTES FOR TEAMMATES
+-------------------
+- Every teammate shares the SAME Atlas database, so the data is identical
+  for everyone. load_data.py drops and reloads the collections, so avoid
+  two people running it at the exact same moment.
+- The dataset is deterministic (random seed 42): running run_all.py again
+  reproduces the exact same students, results, and analysis numbers shown
+  in the report (Appendix B).
+- Keep .env private-ish: it contains the cluster password. Do not post it
+  in public repositories.
+
+WHAT THE PROJECT DOES
+---------------------
+1. Generates a realistic one-semester dataset:
+     - 1,200 students across 5 branches (CSE, ECE, ISE, ME, CV)
+     - 7,200 subject-wise result records (6 subjects per student)
+2. Loads data into MongoDB and creates indexes for frequent queries
+3. Answers 7 analytical questions using find() and aggregation:
+     Q1. Branch-wise student count and average CGPA
+     Q2. Top 10 students by CGPA
+     Q3. Subject-wise average marks and pass percentage
+     Q4. Attendance-risk buckets (detention risk analysis)
+     Q5. Students with backlogs (using $lookup join)
+     Q6. Hostellers vs day scholars performance comparison
+     Q7. Keyword search on student names (text index)
+4. Verifies index effectiveness with explain() (COLLSCAN vs IXSCAN)
+5. Generates matplotlib charts for visualisation
+
+EXPECTED OUTPUT
+---------------
+- console_output.txt : Full verbatim output of the pipeline run
+- charts/            : 6 PNG charts (branch strength, branch CGPA,
+                       CGPA distribution, attendance bands,
+                       CSE subjects, hosteller comparison)
+- MongoDB collections: college_analytics.students (1,200 docs),
+                       college_analytics.results (7,200 docs)
+- Streamlit dashboard at http://localhost:8501 (Option C)
+
+================================================================================

@@ -1,0 +1,158 @@
+Generated 1200 students -> students.json
+Generated 7200 result records -> results.json
+Failed subject records: 242 (3.4% of all results)
+Loaded 1200 documents into 'students' collection
+Loaded 7200 documents into 'results' collection
+
+Indexes created:
+  students: uniq_student_id -> [('student_id', 1)]
+  students: idx_cgpa_desc -> [('cgpa', -1)]
+  students: idx_branch_cgpa -> [('branch', 1), ('cgpa', -1)]
+  students: idx_branch_attendance -> [('branch', 1), ('attendance_pct', 1)]
+  results: idx_result_student -> [('student_id', 1)]
+  results: idx_subject_result -> [('subject_code', 1), ('result', 1)]
+  results: idx_result_total -> [('result', 1), ('total', -1)]
+
+Collections in database 'college_analytics': ['results', 'students']
+students count  : 1200
+results count   : 7200
+
+====================================================================
+Q1. Branch-wise student count and average CGPA
+====================================================================
+CV   | students:  140 | avg CGPA: 7.57 | avg attendance: 85.3%
+ISE  | students:  240 | avg CGPA: 7.56 | avg attendance: 85.0%
+CSE  | students:  360 | avg CGPA: 7.30 | avg attendance: 84.1%
+ME   | students:  180 | avg CGPA: 7.24 | avg attendance: 84.0%
+ECE  | students:  280 | avg CGPA: 7.16 | avg attendance: 83.6%
+
+====================================================================
+Q2. Top 10 students by CGPA (overall)
+====================================================================
+STU0008 | Kavya Salian           | ECE  | CGPA 10.00
+STU0108 | Sumanth Kumar          | ME   | CGPA 10.00
+STU0559 | Sagar Salian           | CSE  | CGPA 10.00
+STU0053 | Anil Nayak             | ISE  | CGPA 9.83
+STU0364 | Harini Nayak           | ME   | CGPA 9.83
+STU0395 | Karthik Kulkarni       | ISE  | CGPA 9.83
+STU0401 | Nandini Nayak          | CSE  | CGPA 9.83
+STU0439 | Aishwarya Pai          | CSE  | CGPA 9.83
+STU0505 | Arjun Hegde            | CSE  | CGPA 9.83
+STU0575 | Divya Hegde            | ME   | CGPA 9.83
+
+====================================================================
+Q3. Subject-wise average marks and pass percentage
+====================================================================
+Subject                                   App.    Avg   Pass%
+CV501 Structural Analysis                  140   70.8   99.3%
+IS501 Data Structures                      240   70.5   99.2%
+IS503 Software Engineering                 240   70.5   99.2%
+CV505 Fluid Mechanics                      140   70.7   98.6%
+IS504 Design and Analysis of Algorithms    240   71.3   98.3%
+IS505 Computer Networks                    240   70.8   97.9%
+IS502 Database Management Systems          240   71.0   97.9%
+IS506 Information Retrieval                240   70.3   97.5%
+CS503 Software Engineering                 360   68.8   97.5%
+ME505 Fluid Machinery                      180   69.7   97.2%
+CV504 Concrete Technology                  140   70.5   97.1%
+CV506 Estimation and Costing               140   71.4   97.1%
+
+====================================================================
+Q4. Attendance risk buckets (min 75% required by the college)
+====================================================================
+40-59%  (critical) | students:    4 | avg CGPA: 0.46
+60-74%  (warning) | students:  120 | avg CGPA: 6.16
+75-84%  (healthy) | students:  491 | avg CGPA: 7.40
+85-100% (excellent) | students:  585 | avg CGPA: 7.59
+
+====================================================================
+Q5. Top 12 students by number of backlogs ($lookup join)
+====================================================================
+STU0570 | Meghana Shetty         | ME   | backlogs: 6 | CGPA 0.00
+STU0654 | Ganesh Pai             | CSE  | backlogs: 6 | CGPA 0.00
+STU0226 | Vikram Patil           | CV   | backlogs: 6 | CGPA 0.00
+STU0608 | Divya Pillai           | ECE  | backlogs: 6 | CGPA 0.00
+STU0029 | Rohit Kulkarni         | ME   | backlogs: 5 | CGPA 0.83
+STU0609 | Akash Kumar            | ME   | backlogs: 5 | CGPA 0.83
+STU0518 | Akash Kamath           | CSE  | backlogs: 5 | CGPA 0.83
+STU0102 | Ananya Kamath          | ECE  | backlogs: 5 | CGPA 0.83
+STU0362 | Vinay Sharma           | CSE  | backlogs: 5 | CGPA 0.83
+STU1013 | Karthik Reddy          | ME   | backlogs: 5 | CGPA 0.83
+STU0291 | Nisha Pai              | ECE  | backlogs: 5 | CGPA 0.83
+STU0348 | Ananya Nayak           | CSE  | backlogs: 5 | CGPA 1.00
+
+====================================================================
+Q6. Hostellers vs day scholars - performance comparison
+====================================================================
+Day scholars  | students:  699 | avg CGPA: 7.31 | avg attendance: 84.3% | with backlog: 66
+Hostellers    | students:  501 | avg CGPA: 7.38 | avg attendance: 84.2% | with backlog: 46
+
+====================================================================
+Q7. Keyword search - find students by surname using a text index
+====================================================================
+Created text index on students.name
+STU0863 | Shreyas Kumar          | CV   | CGPA 6.83 | score 0.75
+STU0950 | Harini Kumar           | ME   | CGPA 9.33 | score 0.75
+STU0788 | Vinay Kumar            | ECE  | CGPA 8.00 | score 0.75
+STU1102 | Kiran Kumar            | CSE  | CGPA 8.83 | score 0.75
+STU0527 | Ananya Kumar           | CSE  | CGPA 6.17 | score 0.75
+Total students matching the keyword 'kumar': 62
+
+All analyses completed.
+====================================================================
+Verifying the index on students.cgpa with explain()
+Query: db.students.find({}, {student_id:1, name:1, branch:1, cgpa:1})
+        .sort({cgpa: -1}).limit(10)
+====================================================================
+
+Dropped index 'idx_cgpa_desc' to simulate a non-indexed collection.
+
+--- WITHOUT index (full collection scan) ---
+winning plan stage : COLLSCAN
+nReturned           : 10
+totalKeysExamined   : 0
+totalDocsExamined   : 1200
+executionTimeMillis : 1
+
+Re-created index 'idx_cgpa_desc' = { cgpa: -1 }.
+
+--- WITH index idx_cgpa_desc ---
+winning plan stage : IXSCAN (index: idx_cgpa_desc)
+nReturned           : 10
+totalKeysExamined   : 10
+totalDocsExamined   : 10
+executionTimeMillis : 1
+
+Summary
+  documents examined : 1200 -> 10
+  documents returned : 10 -> 10
+  the indexed plan examines 10 documents instead of 1200 - a reduction of 99.2%.
+saved fig1_branch_strength.png
+saved fig2_branch_cgpa.png
+saved fig3_cgpa_distribution.png
+saved fig4_attendance_bands.png
+saved fig5_cse_subjects.png
+saved fig6_hostel_compare.png
+All charts generated in C:\Users\DELL\.zcode\workspace\default\mongo_report\project\charts
+
+####################################################################
+### RUNNING generate_data.py
+####################################################################
+
+####################################################################
+### RUNNING load_data.py
+####################################################################
+
+####################################################################
+### RUNNING analyses.py
+####################################################################
+
+####################################################################
+### RUNNING explain_check.py
+####################################################################
+
+####################################################################
+### RUNNING visualise.py
+####################################################################
+
+Pipeline finished successfully.
