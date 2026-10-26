@@ -32,8 +32,7 @@ if not MONGO_URI:
     try:
         MONGO_URI = st.secrets["MONGO_URI"]
     except (FileNotFoundError, KeyError):
-        raise SystemExit("MONGO_URI is not set - put it in .env locally "
-                         "or in Streamlit secrets on Streamlit Cloud.")
+        MONGO_URI = None
 DB_NAME = "college_analytics"
 
 st.set_page_config(
@@ -54,6 +53,9 @@ st.caption(
 # ------------------------------------------------------------------ #
 @st.cache_resource
 def get_collection():
+    if not MONGO_URI:
+        raise RuntimeError("MONGO_URI is not set - add it to Streamlit app "
+                           "Secrets (settings page) or .env for local runs.")
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
     client.admin.command("ping")
     return client[DB_NAME]["students"]
@@ -74,8 +76,9 @@ try:
     df = load_students()
 except Exception as exc:  # noqa: BLE001
     st.error(
-        "Could not connect to MongoDB Atlas. Check MONGO_URI in .env, your "
-        "Atlas IP allowlist, and that you have run load_data.py at least once."
+        "Could not connect to MongoDB Atlas. Set MONGO_URI in Streamlit Secrets "
+        "(app settings page) or .env for local runs, check the Atlas IP "
+        "allowlist, and run load_data.py at least once."
     )
     st.exception(exc)
     st.stop()
