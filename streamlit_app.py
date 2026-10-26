@@ -29,7 +29,11 @@ load_dotenv(override=True)
 
 MONGO_URI = os.getenv("MONGO_URI")
 if not MONGO_URI:
-    raise SystemExit("MONGO_URI is not set - copy .env.example to .env and fill in the Atlas connection string.")
+    try:
+        MONGO_URI = st.secrets["MONGO_URI"]
+    except (FileNotFoundError, KeyError):
+        raise SystemExit("MONGO_URI is not set - put it in .env locally "
+                         "or in Streamlit secrets on Streamlit Cloud.")
 DB_NAME = "college_analytics"
 
 st.set_page_config(
